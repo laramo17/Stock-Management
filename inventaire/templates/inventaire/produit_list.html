@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Produits</title>
+</head>
+<body>
+<h1>Produits</h1>
+<a href="{% url 'produit_add' %}">Add New Produit</a>
+<ul>
+    {% for produit in produits %}
+        <li>
+            {{ produit.nomP }} - {{ produit.quantite_stock }} - {{ produit.prix_unitaire }} - {{ produit.fournisseur.nomF }}
+            <a href="{% url 'produit_edit' produit.id %}">Edit</a>
+            <a href="{% url 'produit_delete' produit.id %}">Delete</a>
+        </li>
+    {% endfor %}
+</ul>
+</body>
+</html>

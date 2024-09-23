@@ -1,0 +1,147 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'produit_form.css' %}">
+    <title>Modifier un Client</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap");
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+            text-decoration: none;
+        }
+
+        body {
+            background-color: #282A36;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            width: 60vw;
+            height: auto;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            margin-bottom: 20px;
+        }
+
+        .form {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .form input, .form select, .form button, .form textarea {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #DDDDDD;
+            margin-bottom: 15px;
+            font-family: "Roboto Mono", sans-serif;
+            box-shadow: 1px 5px 9px rgba(211, 211, 211, .7);
+        }
+
+        .modifier {
+            font-size: 20px;
+            color: white;
+            border-radius: 15px;
+            border: none;
+            background-color: orange;
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            box-shadow: 1px 5px 9px rgba(211, 211, 211, .9);
+        }
+
+        .supprimer {
+            font-size: 20px;
+            color: white;
+            border-radius: 15px;
+            border: none;
+            background-color: #ff0921;
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            box-shadow: 1px 5px 9px rgba(211, 211, 211, .9);
+        }
+    </style>
+    <script>
+        function fetchClientDetails() {
+            const clientId = document.querySelector('select[name="client"]').value;
+            console.log(clientId);
+            if (!clientId) {
+                return;  // Exit if no client is selected
+            }
+
+            fetch(`/inventaire/modifier_client/client_details/${clientId}/`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Update the form fields with the retrieved data
+                    document.querySelector('input[name="prenom"]').value = data.prenom;
+                    document.querySelector('input[name="nom"]').value = data.nom;
+                    document.querySelector('input[name="telephone"]').value = data.telephone;
+                    document.querySelector('textarea[name="adresse"]').value = data.adresse;
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+        }
+    </script>
+</head>
+<body>
+    <div class="card">
+        <h2>Modifier un Client</h2>
+        <form method="post" class="form" action="{% url 'modifier_client' %}">
+            {% csrf_token %}
+            <h5>Sélectionner le Client à Modifier</h5>
+            <select name="client" class="text" required onchange="fetchClientDetails()">
+                <option value="">Choisir un Client</option>
+                {% for client in clients %}
+                    <option value="{{ client.idCl }}">{{ client.prenom }} {{ client.nom }}</option>
+                {% endfor %}
+            </select>
+
+            <h5>Prénom</h5>
+            <input type="text" name="prenom" class="text" required>
+
+            <h5>Nom</h5>
+            <input type="text" name="nom" class="text" required>
+
+            <h5>Téléphone</h5>
+            <input type="text" name="telephone" class="text" required>
+
+            <h5>Adresse</h5>
+            <textarea name="adresse" class="text" rows="2" required></textarea>
+
+            <button type="submit" name="action" value="modifier" class="modifier">Modifier client</button>
+            <button type="submit" name="action" value="supprimer" class="supprimer">Supprimer client</button>
+        </form>
+    </div>
+</body>
+</html>

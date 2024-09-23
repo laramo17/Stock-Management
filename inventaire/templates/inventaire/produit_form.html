@@ -1,0 +1,207 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'produit_form.css' %}">
+    <title>Ajouter un Produit</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap");
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+
+        {% comment %} * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+            text-decoration: none;
+          }
+          
+          body{
+            background-color: #282A36;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+          
+          .card{
+              width: 60vw;
+              height: 80vh;
+              background-color: white;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              padding: 20px;
+              border-radius: 20px;
+          }
+          
+          .card h2{
+            margin-bottom: 10px;
+          }
+          
+          .card a.fp{
+            width: 100%;
+            display: flex;
+            color: #5881D0;
+          }
+
+          .form{
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+          }
+          
+          .form input{
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #DDDDDD;
+            color: #A0A6A3;
+            font-family: "Roboto Mono", sans-serif;
+            box-shadow: 1px 5px 9px rgba(211, 211, 211, .7);
+          }
+          
+          .form input.text{
+            margin-bottom: 15px;
+          }
+          
+          
+          .login_btn{
+            font-size: 20px;
+            color: white;
+            border-radius: 15px;
+            border: none;
+            background-color: #003A74;
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            background: linear-gradient(-90deg, #003A74, #006AD5);
+            box-shadow: 1px 5px 9px rgba(211, 211, 211, .9);
+          } {% endcomment %}
+            /* Reset CSS */
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: "Poppins", sans-serif;
+                text-decoration: none;
+            }
+        
+            /* Body styles */
+            body {
+                background-color: #282A36;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+            }
+        
+            /* Card container styles */
+            .card {
+                width: 80%;
+                max-width: 600px;
+                background-color: #fff;
+                border-radius: 20px;
+                padding: 30px;
+                box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+                text-align: center;
+            }
+        
+            /* Heading styles */
+            .card h2 {
+                margin-bottom: 20px;
+                color: #333;
+                font-weight: 600;
+            }
+        
+            /* Form styles */
+            .form {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+        
+            .form input,
+            .form select {
+                width: 100%;
+                padding: 15px;
+                margin-bottom: 20px;
+                border: none;
+                border-radius: 8px;
+                background-color: #f0f0f0;
+                font-family: "Roboto Mono", sans-serif;
+                font-size: 16px;
+                color: #333;
+                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+                transition: all 0.3s ease;
+            }
+        
+            .form input:focus,
+            .form select:focus {
+                outline: none;
+                background-color: #e0e0e0;
+            }
+        
+            /* Button styles */
+            .login_btn {
+                width: 100%;
+                padding: 15px;
+                border: none;
+                border-radius: 8px;
+                background: linear-gradient(-90deg, #003A74, #006AD5);
+                color: #fff;
+                font-size: 18px;
+                font-weight: 600;
+                cursor: pointer;
+                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+                transition: background 0.3s ease;
+            }
+        
+            .login_btn:hover {
+                background: linear-gradient(-90deg, #006AD5, #003A74);
+            }
+        
+            /* Link styles */
+            .card a.fp {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: #5881D0;
+                margin-top: 20px;
+                font-weight: 600;
+                text-decoration: none;
+                transition: color 0.3s ease;
+            }
+        
+            .card a.fp:hover {
+                color: #003A74;
+            }
+
+        
+    </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Ajouter un Produit</h2>
+    <form method="post" class="form">
+        {% csrf_token %}
+        <input type="text" name="nomP" placeholder="Nom du Produit" class="text" required>
+        <input type="number" name="quantite_stock" placeholder="Quantite acheté" class="text" required>
+        <input type="number" name="prix_unitaire" placeholder="Prix unitaire" class="text" required>
+        <select name="fournisseur" class="text" required>
+          <option value="">Choisir un fournisseur</option>
+          <!-- Boucle pour afficher les options pour chaque fournisseur -->
+          {% for fournisseur in fournisseurs %}
+              <option value="{{ fournisseur.idF }}">{{ fournisseur.nomF }}</option>
+          {% endfor %}
+      </select>      
+        <button type="submit" class="login_btn">Ajouter</button>
+    </form>
+</div>
+
+
+</body>
+</html>

@@ -1,0 +1,137 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'produit_form.css' %}">
+    <title>Modifier un Fournisseur</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap");
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+            text-decoration: none;
+        }
+
+        body {
+            background-color: #282A36;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            width: 60vw;
+            height: auto;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            margin-bottom: 20px;
+        }
+
+        .form {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .form input, .form select, .form button, .form textarea {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #DDDDDD;
+            margin-bottom: 15px;
+            font-family: "Roboto Mono", sans-serif;
+            box-shadow: 1px 5px 9px rgba(211, 211, 211, .7);
+        }
+        .modifier {
+            font-size: 20px;
+            color: white;
+            border-radius: 15px;
+            border: none;
+            background-color: orange;
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            box-shadow: 1px 5px 9px rgba(211, 211, 211, .9);
+        }
+
+        .supprimer {
+            font-size: 20px;
+            color: white;
+            border-radius: 15px;
+            border: none;
+            background-color: #ff0921;
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            box-shadow: 1px 5px 9px rgba(211, 211, 211, .9);
+        }
+    </style>
+    <script>
+        function fetchFournisseurDetails() {
+            const fournisseurId = document.querySelector('select[name="fournisseur"]').value;
+            if (!fournisseurId) {
+                return;  // Exit if no fournisseur is selected
+            }
+
+            fetch(`fournisseur_details/${fournisseurId}/`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Mettre à jour les champs du formulaire avec les données récupérées
+                    document.querySelector('input[name="nomF"]').value = data.nomF;
+                    document.querySelector('input[name="adresseF"]').value = data.adresseF;
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+        }
+    </script>
+</head>
+<body>
+    <div class="card">
+        <h2>Modifier un Fournisseur</h2>
+        <form method="post" class="form" action="{% url 'modifier_fournisseur' %}">
+            {% csrf_token %}
+            <h5>Sélectionner le Fournisseur à Modifier</h5>
+            <select name="fournisseur" class="text" required onchange="fetchFournisseurDetails()">
+                <option value="">Choisir un Fournisseur</option>
+                {% for fournisseur in fournisseurs %}
+                    <option value="{{ fournisseur.idF }}">{{ fournisseur.nomF }}</option>
+                {% endfor %}
+            </select>
+
+            <h5>Nom du Fournisseur</h5>
+            <input type="text" name="nomF" class="text" required>
+
+            <h5>Adresse</h5>
+            <input type="text" name="adresseF" class="text" required>
+
+            <button type="submit" name="action" value="modifier" class="modifier">Modifier fournisseur</button>
+            <button type="submit" name="action" value="supprimer" class="supprimer">Supprimer fournisseur</button>
+        </form>
+    </div>
+</body>
+</html>

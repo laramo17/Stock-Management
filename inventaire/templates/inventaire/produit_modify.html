@@ -1,0 +1,153 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'produit_form.css' %}">
+    <title>Modifier un Produit</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap");
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+            text-decoration: none;
+        }
+
+        body {
+            background-color: #282A36;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .card {
+            width: 60vw;
+            height: auto;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            margin-bottom: 20px;
+        }
+
+        .form {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .form input, .form select, .form button, .form textarea {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #DDDDDD;
+            margin-bottom: 15px;
+            font-family: "Roboto Mono", sans-serif;
+            box-shadow: 1px 5px 9px rgba(211, 211, 211, .7);
+        }
+        .modifier {
+            font-size: 20px;
+            color: white;
+            border-radius: 15px;
+            border: none;
+            background-color: orange;
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            box-shadow: 1px 5px 9px rgba(211, 211, 211, .9);
+        }
+
+        .supprimer {
+            font-size: 20px;
+            color: white;
+            border-radius: 15px;
+            border: none;
+            background-color: #ff0921;
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            box-shadow: 1px 5px 9px rgba(211, 211, 211, .9);
+        } 
+    </style>
+        <script>
+            function fetchProduitDetails() {
+                const produitId = document.querySelector('select[name="produit"]').value;
+                console.log("hello");
+                console.log(produitId);
+                if (!produitId) {
+                    return;  // Exit if no produit is selected
+                }
+    
+                fetch(`produit_details/${produitId}/`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Mettre à jour les champs du formulaire avec les données récupérées
+                        document.querySelector('textarea[name="nomP"]').value = data.nomP;
+                        document.querySelector('input[name="quantite_stock"]').value = data.quantite_stock;
+                        document.querySelector('input[name="prix_unitaire"]').value = data.prix_unitaire;
+                        document.querySelector('select[name="fournisseur"]').value = data.fournisseur;
+                    })
+                    .catch(error => {
+                        console.error('There was a problem with the fetch operation:', error);
+                    });
+            }
+        </script>
+    </head>
+    <body>
+      <div class="card">
+        <h2>Modifier un Produit</h2>
+        <form method="post" class="form" action="{% url 'modifier_produit' %}">
+            {% csrf_token %}
+            <h5>Selectionner le Produit à Modifier</h5>
+            <select name="produit" class="text" required onchange="fetchProduitDetails()">
+                <option value="">Choisir un Produit</option>
+                {% for produit in produits %}
+                    <option value="{{ produit.idP }}">{{ produit.nomP }} (Quantité en stock: {{ produit.quantite_stock }})</option>
+                {% endfor %}
+            </select>
+    
+            <h5>Nom du Produit</h5>
+            <textarea name="nomP" class="text" rows="2" required></textarea>
+    
+            <h5>Quantité en stock</h5>
+            <input type="number" name="quantite_stock" class="text" required>
+    
+            <h5>Prix Unitaire</h5>
+            <input type="number" name="prix_unitaire" class="text" step="0.01" required>
+    
+            <h5>Fournisseur</h5>
+            <select name="fournisseur" class="text" required>
+                <option value="">Choisir un fournisseur</option>
+                {% for fournisseur in fournisseurs %}
+                    <option value="{{ fournisseur.idF }}">{{ fournisseur.nomF }}</option>
+                {% endfor %}
+            </select>
+    
+            <button type="submit" name="action" value="modifier" class="modifier">Modifier produit</button>
+            <button type="submit" name="action" value="supprimer" class="supprimer">Supprimer produit</button>
+        </form>
+      </div>
+    </body>
+    </html>
+    

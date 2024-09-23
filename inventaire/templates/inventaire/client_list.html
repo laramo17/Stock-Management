@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Liste des Clients</title>
+    <style>
+        /* CSS styles with sky blue colors */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: sans-serif;
+        }
+    
+        body {
+            min-height: 100vh;
+            background: #f0f0f0; /* Light gray background color */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    
+        main.table {
+            width: 82vw;
+            height: 90vh;
+            background-color: #ffffff; /* White background color */
+            box-shadow: 0 .4rem .8rem rgba(0, 0, 0, 0.1);
+            border-radius: .8rem;
+            overflow: hidden;
+        }
+    
+        .table__header {
+            width: 100%;
+            height: 10%;
+            background-color: #42a5f5; /* Sky blue background color */
+            padding: .8rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    
+        .table__header .input-group {
+            width: 35%;
+            height: 100%;
+            background-color: #2196f3; /* Darker sky blue background color */
+            padding: 0 .8rem;
+            border-radius: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: .2s;
+        }
+    
+        .table__header .input-group:hover {
+            width: 45%;
+            background-color: #1e88e5; /* Even darker sky blue background color on hover */
+            box-shadow: 0 .1rem .4rem rgba(0, 0, 0, 0.1);
+        }
+    
+        .table__header .input-group input {
+            width: 100%;
+            padding: 0 .5rem 0 .3rem;
+            background-color: transparent;
+            border: none;
+            outline: none;
+        }
+    
+        .table__body {
+            width: 95%;
+            max-height: calc(89% - 1.6rem);
+            background-color: #e1f5fe; /* Light sky blue background color */
+            margin: .8rem auto;
+            border-radius: .6rem;
+            overflow: auto;
+            overflow: overlay;
+        }
+    
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+    
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            color: #333; /* Dark text color */
+        }
+    
+        thead th {
+            position: sticky;
+            top: 0;
+            left: 0;
+            background-color: #42a5f5; /* Sky blue background color */
+            cursor: pointer;
+            text-transform: capitalize;
+        }
+    
+        tbody tr:nth-child(even) {
+            background-color: #bbdefb; /* Light blue background color for even rows */
+        }
+    
+        tbody tr {
+            --delay: .1s;
+            transition: .5s ease-in-out var(--delay), background-color 0s;
+        }
+    
+        tbody tr.hide {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+    
+        tbody tr:hover {
+            background-color: #90caf9 !important; /* Darker sky blue background color on hover */
+        }
+    
+        tbody tr td,
+        tbody tr td p,
+        tbody tr td img {
+            transition: .2s ease-in-out;
+        }
+    
+        tbody tr.hide td,
+        tbody tr.hide td p {
+            padding: 0;
+            font: 0 / 0 sans-serif;
+            transition: .2s ease-in-out .5s;
+        }
+    
+        tbody tr.hide td img {
+            width: 0;
+            height: 0;
+            transition: .2s ease-in-out .5s;
+        }
+    
+        .status {
+            padding: .4rem 0;
+            border-radius: 2rem;
+            text-align: center;
+            font-weight: bold; /* Bold font weight for status */
+        }
+    
+        .status.delivered {
+            background-color: #81d4fa; /* Light blue background color for delivered status */
+            color: #0277bd; /* Dark blue text color */
+        }
+    
+        .status.cancelled {
+            background-color: #ef9a9a; /* Light red background color for cancelled status */
+            color: #c62828; /* Dark red text color */
+        }
+    
+        .status.pending {
+            background-color: #ffe082; /* Light yellow background color for pending status */
+        }
+    
+        .status.shipped {
+            background-color: #a5d6a7; /* Light green background color for shipped status */
+        }
+    
+        @media (max-width: 1000px) {
+            td:not(:first-of-type) {
+                min-width: 12.1rem;
+            }
+        }
+    
+        thead th span.icon-arrow {
+            display: inline-block;
+            width: 1.3rem;
+            height: 1.3rem;
+            border-radius: 50%;
+            border: 1.4px solid transparent;
+            text-align: center;
+            font-size: 1rem;
+            margin-left: .5rem;
+            transition: .2s ease-in-out;
+        }
+    
+        thead th:hover span.icon-arrow {
+            border: 1.4px solid #6c00bd; /* Purple border color on hover */
+        }
+    
+        thead th:hover {
+            color: #6c00bd; /* Purple text color on hover */
+        }
+    
+        thead th.active span.icon-arrow {
+            background-color: #6c00bd; /* Purple background color when active */
+            color: #fff; /* White text color */
+        }
+    
+        thead th.asc span.icon-arrow {
+            transform: rotate(180deg); /* Rotate arrow for ascending sort */
+        }
+    
+        thead th.active,
+        tbody td.active {
+            color: #6c00bd; /* Purple text color when active */
+        }
+    
+    </style>
+    
+</head>
+
+<body>
+    <main class="table">
+        <section class="table__header">
+            <h1>Liste Clients</h1>
+            <div class="input-group">
+                <input type="search" placeholder="Rechercher...">
+            </div>
+        </section>
+        <section class="table__body">
+            <table>
+                <thead>
+                    <tr>
+                        <th> ID </th>
+                        <th> Prénom </th>
+                        <th> Nom </th>
+                        <th> Adresse </th>
+                        <th> Téléphone </th>
+                    </tr>
+                </thead>
+                <tbody id="clients-table-body">
+                    {% for client in clients %}
+                    <tr>
+                        <td>{{ client.idCl }}</td>
+                        <td>{{ client.prenom }}</td>
+                        <td>{{ client.nom }}</td>
+                        <td>{{ client.adresse }}</td>
+                        <td>{{ client.telephone }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </main>
+<script>
+    // Votre JavaScript existant pour le tri et la recherche
+    document.addEventListener('DOMContentLoaded', () => {
+        fetch('{% url "liste_fournisseur" %}')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('La réponse du réseau n\'est pas correcte');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const tableBody = document.getElementById('fournisseurs-table-body');
+                data.forEach(fournisseur => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${fournisseur.idF}</td>
+                        <td>${fournisseur.nomF}</td>
+                        <td>${fournisseur.adresseF}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Il y a eu un problème avec l\'opération de fetch :', error);
+            });
+    });
+
+    
+// Search functionality
+const search = document.querySelector('.input-group input');
+search.addEventListener('input', searchTable);
+
+function searchTable() {
+    const tableRows = document.querySelectorAll('tbody tr');
+    tableRows.forEach((row, i) => {
+        let tableData = row.textContent.toLowerCase(),
+            searchData = search.value.toLowerCase();
+
+        row.classList.toggle('hide', tableData.indexOf(searchData) < 0);
+        row.style.setProperty('--delay', i / 25 + 's');
+    });
+
+    document.querySelectorAll('tbody tr:not(.hide)').forEach((visibleRow, i) => {
+        visibleRow.style.backgroundColor = (i % 2 == 0) ? 'transparent' : '#0000000b';
+    });
+}
+
+// Sorting functionality
+const tableHeadings = document.querySelectorAll('thead th');
+tableHeadings.forEach((head, i) => {
+    let sortAsc = true;
+    head.onclick = () => {
+        tableHeadings.forEach(head => head.classList.remove('active'));
+        head.classList.add('active');
+
+        document.querySelectorAll('td').forEach(td => td.classList.remove('active'));
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.querySelectorAll('td')[i].classList.add('active');
+        });
+
+        head.classList.toggle('asc', sortAsc);
+        sortAsc = head.classList.contains('asc') ? false : true;
+
+        sortTable(i, sortAsc);
+    };
+});
+
+function sortTable(column, sortAsc) {
+    const tableRows = [...document.querySelectorAll('tbody tr')];
+    tableRows.sort((a, b) => {
+        let firstRow = a.querySelectorAll('td')[column].textContent.toLowerCase(),
+            secondRow = b.querySelectorAll('td')[column].textContent.toLowerCase();
+
+        return sortAsc ? (firstRow < secondRow ? 1 : -1) : (firstRow < secondRow ? -1 : 1);
+    }).forEach(sortedRow => document.querySelector('tbody').appendChild(sortedRow));
+}
+</script>
+</body>
+</html>
+
